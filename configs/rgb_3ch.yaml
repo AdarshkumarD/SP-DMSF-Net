@@ -1,0 +1,70 @@
+# SP-DMSF-Net — 3-channel (RGB only) configuration, e.g. the Hokkaido dataset.
+# Usage: python train.py --config configs/rgb_3ch.yaml
+# Any value can be overridden from the CLI:  --set training.epochs=5 data.image_dir=/my/img
+
+experiment_name: sp_dmsf_net_rgb_3ch
+seed: 42
+output_dir: outputs
+
+data:
+  name: Hokkaido
+  image_dir:      # <- your path
+  mask_dir:      # <-  your path
+  dem_dir: null                  # no DEM for the 3-channel setting
+  img_height: 256
+  img_width: 256
+  in_channels: 3
+  # Two-stage split (values go to scikit-learn's test_size: int = count, float = fraction).
+  #   stage 1: `holdout` of all samples is held out  -> rest is TRAIN   (70 %)
+  #   stage 2: `test_in_holdout` of the holdout is TEST, remainder VAL  (15 % / 15 %)
+  split:
+    holdout: 0.30
+    test_in_holdout: 0.50
+  preprocessing:
+    hist_equalize: false         # per-channel min-max only
+
+model:
+  pretrained_backbone: true      # ImageNet VGG16 weights (downloaded on first use)
+  aspp_filters: 128
+  dropout: 0.3
+
+training:
+  batch_size: 8
+  epochs: 60
+  optimizer: adam                # adam | adamw | sgd | rmsprop
+  learning_rate: 0.0001
+  weight_decay: 0.001
+  momentum: 0.9                  # used by sgd / rmsprop
+  threshold: 0.5                 # binarisation threshold for the metrics
+  use_multi_gpu: false           # true -> tf.distribute.MirroredStrategy
+  early_stopping_patience: 7
+  reduce_lr:
+    factor: 0.5
+    patience: 3
+    min_lr: 1.0e-6
+  loss:
+    mode: dice                   # bce | dice | focal | tversky | combined
+    combined: {bce: 0.0, dice: 1.0, focal: 0.0, tversky: 0.0}   # weights, only for mode=combined
+    focal: {alpha: 0.85, gamma: 2.0}
+    tversky: {alpha: 0.3, beta: 0.7}
+
+# Augmentation (implemented in src/augmentation.py). OFF by default for the RGB setting.
+# Toggle here, or from the CLI:  --aug on   /   --aug off
+augmentation:
+  enabled: false
+  mode: online_random            # online_random | offline_full
+  rotations: [0, 90, 180, 270]
+  mirror: true
+  photometric: [none, gaussian, saturation, uniform, blur, bright_up, bright_down]
+  params:
+    gauss_sigma: 0.05
+    uniform_range: 0.10
+    saturation_factor: 1.5
+    blur_ksize: 5
+    bright_up: 1.3
+    bright_down: 0.7
+
+hardware_profiling:
+  enabled: true
+  warmup_runs: 20
+  timed_runs: 100

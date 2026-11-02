@@ -1,0 +1,17 @@
+# Native Windows 10/11 + NVIDIA GPU. Exact versions of the tested environment.
+# Python 3.10.11 | TensorFlow 2.10.0 (last native-Windows GPU release) | CUDA 11.2 + cuDNN 8.x
+# Install with:  pip install -r requirements-windows-gpu.txt
+# (full `pip freeze` of the tested environment: environment-windows-gpu-freeze.txt)
+tensorflow==2.10.0
+keras==2.10.0
+numpy==1.26.4
+protobuf==3.19.6
+h5py==3.16.0
+scipy==1.15.3
+pandas==2.3.3
+scikit-learn==1.7.2
+matplotlib==3.10.9
+opencv-python==4.10.0.84
+pyyaml==6.0.3
+# ptxas/libdevice 11.8 -- used for GPUs newer than TF 2.10 (e.g. RTX Ada, sm_89); see README Step 6
+nvidia-cuda-nvcc-cu11==11.8.89

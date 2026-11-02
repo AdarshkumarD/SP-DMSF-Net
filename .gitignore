@@ -1,0 +1,9 @@
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+outputs/
+*.weights.h5
+*.keras
+*.zip
+.DS_Store
+.venv/

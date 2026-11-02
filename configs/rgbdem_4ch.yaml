@@ -1,0 +1,73 @@
+# SP-DMSF-Net — 4-channel (RGB + DEM) configuration, e.g. the Bijie landslide dataset.
+# Usage: python train.py --config configs/rgbdem_4ch.yaml
+# Any value can be overridden from the CLI:  --set training.epochs=5 data.image_dir=/my/img
+
+experiment_name: sp_dmsf_net_rgbdem_4ch
+seed: 42
+output_dir: outputs
+
+data:
+  name: Bijie
+  image_dir:             # <- dataset Path
+  mask_dir:              # <- dataset Path
+  dem_dir:               # <- dataset Path
+  img_height: 256
+  img_width: 256
+  in_channels: 4                 # RGB (3) + DEM (1), stacked in this order
+  # Two-stage split (scikit-learn test_size: int = count, float = fraction).
+  #   stage 1: 308 samples held out -> rest is TRAIN
+  #   stage 2: 154 of the held-out samples are TEST, remaining 154 are VAL
+  split:
+    holdout: 308
+    test_in_holdout: 154
+  preprocessing:
+    hist_equalize: true          # per-channel histogram equalisation after min-max
+
+model:
+  pretrained_backbone: true      # ImageNet VGG16 weights (downloaded on first use)
+  aspp_filters: 128
+  dropout: 0.3
+
+training:
+  batch_size: 8
+  epochs: 100
+  optimizer: adam                # adam | adamw | sgd | rmsprop
+  learning_rate: 0.0001
+  weight_decay: 0.001
+  momentum: 0.9                  # used by sgd / rmsprop
+  threshold: 0.5
+  use_multi_gpu: false           # true -> tf.distribute.MirroredStrategy
+  early_stopping_patience: 20
+  reduce_lr:
+    factor: 0.5
+    patience: 7
+    min_lr: 1.0e-6
+  loss:
+    mode: dice                   # bce | dice | focal | tversky | combined
+    combined: {bce: 0.0, dice: 1.0, focal: 0.0, tversky: 0.0}
+    focal: {alpha: 0.85, gamma: 2.0}
+    tversky: {alpha: 0.3, beta: 0.7}
+
+# Augmentation for RGB+DEM (implemented in src/augmentation.py).
+#   enabled: true/false is the on/off switch  (CLI:  --aug on  /  --aug off)
+#   Geometric ops hit RGB + DEM + mask together; photometric ops hit RGB only.
+#   online_random : one random variant of the 56 per image per epoch (epoch size unchanged)
+#   offline_full  : every train image x 56 variants per epoch (~56x longer epochs -> lower epochs)
+augmentation:
+  enabled: true
+  mode: online_random
+  rotations: [0, 90, 180, 270]
+  mirror: true
+  photometric: [none, gaussian, saturation, uniform, blur, bright_up, bright_down]
+  params:
+    gauss_sigma: 0.05
+    uniform_range: 0.10
+    saturation_factor: 1.5
+    blur_ksize: 5
+    bright_up: 1.3
+    bright_down: 0.7
+
+hardware_profiling:
+  enabled: true
+  warmup_runs: 20
+  timed_runs: 100
