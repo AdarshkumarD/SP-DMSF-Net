@@ -55,7 +55,7 @@ This guide describes the setup the code was developed and tested on: **Windows 1
 | GPU | NVIDIA RTX 2000 Ada Generation Laptop/Workstation GPU, 16 GB (compute capability 8.9) |
 | NVIDIA driver | 596.71 |
 | CUDA Toolkit | 11.2 (runtime DLLs) + `nvidia-cuda-nvcc-cu11` 11.8.89 (compiler, via pip) |
-| cuDNN | 8.x for CUDA 11.x, `cudnn64_8.dll` in the CUDA 11.2 `bin` folder [TODO: exact version, see Step 3] |
+| cuDNN | 8.x for CUDA 11.x, `cudnn64_8.dll` in the CUDA 11.2 `bin` folder [see Step 3] |
 | Python | 3.10.11 |
 | TensorFlow / Keras | 2.10.0 / 2.10.0 |
 | NumPy / protobuf | 1.26.4 / 3.19.6 |
