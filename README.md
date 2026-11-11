@@ -51,7 +51,7 @@ This guide describes the setup the code was developed and tested on: **Windows 1
 
 | Component | Version |
 |---|---|
-| OS | Windows 10/11 64-bit [TODO: confirm exact edition/build] |
+| OS | Windows 10/11 64-bit |
 | GPU | NVIDIA RTX 2000 Ada Generation Laptop/Workstation GPU, 16 GB (compute capability 8.9) |
 | NVIDIA driver | 596.71 |
 | CUDA Toolkit | 11.2 (runtime DLLs) + `nvidia-cuda-nvcc-cu11` 11.8.89 (compiler, via pip) |
@@ -63,7 +63,7 @@ This guide describes the setup the code was developed and tested on: **Windows 1
 | scikit-learn / matplotlib | 1.7.2 / 3.10.9 |
 | OpenCV (`opencv-python`) / PyYAML | 4.10.0.84 / 6.0.3 |
 
-The exact direct requirements are in [`requirements-windows-gpu.txt`](requirements-windows-gpu.txt); the complete `pip freeze` of the tested environment (including all dependencies) is in [`environment-windows-gpu-freeze.txt`](environment-windows-gpu-freeze.txt).
+The exact direct requirements are in [`requirements-windows-gpu.txt`](requirements-windows-gpu.txt).
 
 ### Setup
 
